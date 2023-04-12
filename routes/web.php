@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\TodoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,9 +14,19 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return to_route('todos.index');
 });
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::prefix('todos')->as('todos.')->middleware('auth')->group(function(){
+    Route::get('/', [TodoController::class, 'index'])->name('index');
+    Route::get('create', [TodoController::class, 'create'])->name('create');
+    Route::get('/{todo}/edit', [TodoController::class, 'updTask'])->name('updTask');
+    Route::post('update', [TodoController::class, 'update'])->name('update');
+    Route::put('/{todo}', [TodoController::class, 'edit'])->name('edit');
+    Route::get('/{todo}', [TodoController::class, 'show'])->name('show');
+    Route::delete('/{todo}', [TodoController::class, 'delete'])->name('delete');
+});
+
+
